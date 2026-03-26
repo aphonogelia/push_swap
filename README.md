@@ -13,13 +13,27 @@ cc -Wall -Wextra -Werror src/*.c -Iincludes -o push_swap
 ./push_swap "2 1 3"
 ```
 
-To validate with a checker:
-```bash
-ARG="3 2 1 0"
-./push_swap $ARG | ./other/pro_checker $ARG
-```
-
 **Instruction set:** `sa` `sb` `ss` `pa` `pb` `ra` `rb` `rr` `rra` `rrb` `rrr`
+
+---
+
+## The problem
+
+You have two stacks, A and B. Stack A starts with an unsorted list of integers. Stack B is empty. The goal is to sort A in ascending order using only the operations above — and as few of them as possible.
+
+| Op | Effect |
+|----|--------|
+| `sa` / `sb` | Swap the top two elements of A / B |
+| `ss` | `sa` and `sb` simultaneously |
+| `pa` / `pb` | Push the top of B to A / top of A to B |
+| `ra` / `rb` | Rotate A / B upward (top becomes bottom) |
+| `rr` | `ra` and `rb` simultaneously |
+| `rra` / `rrb` | Reverse rotate A / B (bottom becomes top) |
+| `rrr` | `rra` and `rrb` simultaneously |
+
+**Why it's hard:** you can only see the top of each stack, you can't random-access elements, and every operation counts. The constraint isn't correctness — any sort that terminates is correct — it's minimizing the instruction count. The 42 grading thresholds are roughly: 700 moves for full marks on 100 elements, 5500 for 500 elements. This forces you to think algorithmically rather than just implement a known sort.
+
+There is no single optimal algorithm — the best approach depends on input size. Small inputs (≤ 5) are best handled with hardcoded decision trees. Larger inputs need a strategy that exploits the two-stack structure, which is where chunk-based sorting and cost optimization come in.
 
 ---
 
@@ -38,23 +52,6 @@ This greedy cost model consistently sorts 100 numbers in under 700 moves and 500
 
 ### LIS (Longest Increasing Subsequence)
 For pre-sorted or nearly-sorted inputs, a LIS pass identifies the largest already-ordered subset and keeps it in place, only moving elements that are out of order. This avoids unnecessary operations when the input has significant structure.
-
----
-
-## Testing
-
-```bash
-# Run the included tester
-bash other/Push-Swap-Tester/push_swap_test_linux.sh
-
-# With custom size and iterations
-bash other/Push-Swap-Tester/push_swap_test_linux.sh 250 250
-
-# Benchmark mode
-bash other/Push-Swap-Tester/push_swap_test_linux.sh -b 100 100
-```
-
-A visualizer is available in `visualizer/` — see `visualizer/README.md` for build instructions.
 
 ---
 
